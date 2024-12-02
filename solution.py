@@ -25,7 +25,7 @@ def sum_digits(num: int) -> int:
 def average(values: list[float]) -> float:
     return sum(values) / len(values)
     
-initial_temp = sum_digits(11202130847) * 1.5
+initial_temp = round(sum_digits(11202130847) * 1.5)
 print(f"Temperatura especificada: {initial_temp}°C")
 
 fig, ax = plt.subplots()
@@ -33,7 +33,8 @@ ax.set_xlabel("Tempo [s]")
 ax.set_ylabel("Temperatura [°C]")
 ax.autoscale()
 
-points = range_kutta(90, 0, 0.1, 10000, lambda _, y: -0.0041666667 * (y - 20)) 
+K = 0.25
+points = range_kutta(90, 0, 0.1, 10000, lambda _, y: -K * (y - 20)) 
 
 avg_timestamp, avg_temp = 0, 0
 for i in range(0, len(points[0])):
@@ -47,8 +48,8 @@ for i in range(0, len(points[0])):
         break
 
 table_rows = 5
-print(f"Tempo de resfriamento aproximado: {avg_timestamp}s")
-print(f"Temperatura após o tempo aproximado: {avg_temp}°C")
+print(f"Tempo de resfriamento aproximado: {avg_timestamp:.2f}s")
+print(f"Temperatura após o tempo de resfriamento aproximado: {avg_temp:.2f}°C")
 print("Tabela:")        
 print(tabulate(list(zip(range(0,table_rows + 1), points[0][:table_rows + 1], 
                         points[1][:table_rows + 1])), 
