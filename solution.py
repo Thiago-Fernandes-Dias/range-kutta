@@ -28,20 +28,21 @@ def average(values: list[float]) -> float:
 def generate_table(points: tuple[list[float], list[float]]) -> str:
    return tabulate(list(zip(range(0,table_rows + 1), points[0][:table_rows + 1], 
                         points[1][:table_rows + 1])), 
-               headers=["Iteração", "Tempo [s]", "Temperatura [°C]"], 
+               headers=["Iteração", "Tempo [min]", "Temperatura [°C]"], 
                tablefmt="fancy_grid")
     
 K = 0.25
+N = 200
 
 initial_temp = round(sum_digits(11202130847) * 1.5)
 print(f"Temperatura especificada: {initial_temp}°C")
 
 _, ax_h1 = plt.subplots()
-ax_h1.set_xlabel("Tempo [s]")
+ax_h1.set_xlabel("Tempo [min]")
 ax_h1.set_ylabel("Temperatura [°C]")
 ax_h1.autoscale()
 
-points_h1 = range_kutta(90, 0, 0.1, 10000, lambda _, y: -K * (y - 20)) 
+points_h1 = range_kutta(90, 0, 0.1, N, lambda _, y: -K * (y - 20)) 
 
 avg_timestamp, avg_temp = 0, 0
 for i in range(0, len(points_h1[0])):
@@ -50,8 +51,8 @@ for i in range(0, len(points_h1[0])):
         avg_temp = average(points_h1[1][i - 1:i + 1])
         ax_h1.scatter(avg_timestamp, avg_temp, color='red')
         # Não é necessário verificar o tamanho do array para acessar o valor
-        # da posição i + 1, pois a temperatura final é menor do que a 
-        # especificada.
+        # da posição i + 1, pois a temperatura final (com N iterações) é menor 
+        # do que a especificada.
         break
 
 table_rows = 5
@@ -64,11 +65,11 @@ ax_h1.plot(points_h1[0], points_h1[1], scalex=False, scaley=False)
 plt.savefig("graph-h1.png")
 
 _, ax_h2 = plt.subplots()
-ax_h2.set_xlabel("Tempo [s]")
+ax_h2.set_xlabel("Tempo [min]")
 ax_h2.set_ylabel("Temperatura [°C]")
 ax_h2.autoscale()
 
-points_h2 = range_kutta(90, 0, 0.25, 10000, lambda _, y: -K * (y - 20)) 
+points_h2 = range_kutta(90, 0, 0.25, N, lambda _, y: -K * (y - 20)) 
 
 table_rows = 5
 print("Tabela (h=0.25s):")        
