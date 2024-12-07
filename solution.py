@@ -22,7 +22,7 @@ def range_kutta(y: float, x: float, h: float, n: int,
 def sum_digits(num: int) -> int:
     return sum([int(x) for x in str(num)])
 
-def average(values: list[float]) -> float:
+def average(values: tuple[float, float]) -> float:
     return sum(values) / len(values)
 
 def generate_table(points: tuple[list[float], list[float]]) -> str:
@@ -44,21 +44,22 @@ ax_h1.autoscale()
 
 points_h1 = range_kutta(90, 0, 0.1, N, lambda _, y: -K * (y - 20)) 
 
-avg_timestamp, avg_temp = 0, 0
+timestamp_interval, temp_interval = (0, 0), (0, 0)
 for i in range(0, len(points_h1[0])):
     if points_h1[1][i] <= initial_temp:
-        avg_timestamp = average(points_h1[0][i - 1:i + 1])
-        avg_temp = average(points_h1[1][i - 1:i + 1])
+        timestamp_interval = (points_h1[0][i - 1], points_h1[0][i])
+        temp_interval = (points_h1[1][i - 1], points_h1[1][i])
+        avg_timestamp = average(timestamp_interval)
+        avg_temp = average(temp_interval)
         ax_h1.scatter(avg_timestamp, avg_temp, color='red')
-        # Não é necessário verificar o tamanho do array para acessar o valor
-        # da posição i + 1, pois a temperatura final (com N iterações) é menor 
-        # do que a especificada.
         break
 
 table_rows = 5
-print(f"Tempo de resfriamento aproximado: {avg_timestamp:.2f}s")
-print(f"Temperatura após o tempo de resfriamento aproximado: {avg_temp:.2f}°C")
-print("Tabela (h=0.1s):")        
+print(f"Temperatura especificada: {initial_temp} °C")
+print(f"- Tempo de resfriamento entre {timestamp_interval[0]} e {timestamp_interval[1]} minutos")
+print(f"""- Para estes intervalos, as temperaturas atingidas são 
+  {temp_interval[0]}°C e {temp_interval[1]} °C, respectivamente;""")
+print("- Tabela (h=0.1s):")        
 print(generate_table(points_h1))
 
 ax_h1.plot(points_h1[0], points_h1[1], scalex=False, scaley=False)
